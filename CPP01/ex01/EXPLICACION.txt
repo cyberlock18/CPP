@@ -1,0 +1,165 @@
+================================================================================
+                         CPP01 - EJERCICIO 01
+                    ARRAYS DINAMICOS DE OBJETOS
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Aprender a crear ARRAYS de objetos en el heap con new[] y delete[]
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. ARRAYS EN EL HEAP
+--------------------
+Cuando no sabes cuantos elementos necesitas hasta tiempo de ejecucion,
+usas memoria dinamica.
+
+    int n = 5;
+    Zombie *horde = new Zombie[n];  // Array de n zombies en heap
+
+
+2. CONSTRUCTOR POR DEFECTO
+--------------------------
+Cuando usas new Zombie[N], el sistema necesita crear N objetos.
+Para eso llama al CONSTRUCTOR POR DEFECTO (sin parametros) de cada uno.
+
+    class Zombie {
+        Zombie(void);  // <-- Obligatorio para new[]
+    };
+
+Si no tienes constructor por defecto y usas new[], error de compilacion!
+
+
+3. new[] vs delete[]
+--------------------
+SIEMPRE deben ir en pareja:
+- new Zombie[N]   -->  delete[] horde
+- new Zombie("x") -->  delete zombie
+
+delete[] hace:
+1. Llama al destructor de CADA elemento (de atras hacia adelante)
+2. Libera la memoria
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: CREAR Y USAR ARRAY DINAMICO
+--------------------------------------
+int main() {
+    // Crear array de 3 zombies
+    Zombie *zombies = new Zombie[3];
+
+    // Dar nombre a cada uno
+    zombies[0].setName("Primero");
+    zombies[1].setName("Segundo");
+    zombies[2].setName("Tercero");
+
+    // Usarlos
+    for (int i = 0; i < 3; i++)
+        zombies[i].announce();
+
+    // Liberar memoria
+    delete[] zombies;
+
+    return 0;
+}
+
+
+EJEMPLO 2: VISUALIZACION DE MEMORIA
+-----------------------------------
+Despues de: Zombie *h = new Zombie[3];
+
+MEMORIA HEAP:
++-------------+-------------+-------------+
+|  Zombie 0   |  Zombie 1   |  Zombie 2   |
++-------------+-------------+-------------+
+^
+|
+h (puntero al primero)
+
+h[0] = primer zombie
+h[1] = segundo zombie
+h[2] = tercer zombie
+
+
+EJEMPLO 3: ERROR COMUN - MEZCLAR delete CON new[]
+-------------------------------------------------
+// MAL:
+Zombie *arr = new Zombie[5];
+delete arr;    // Solo destruye el primero, MEMORY LEAK!
+
+// BIEN:
+Zombie *arr = new Zombie[5];
+delete[] arr;  // Destruye los 5 y libera todo
+
+
+EJEMPLO 4: POR QUE NECESITAMOS CONSTRUCTOR POR DEFECTO?
+-------------------------------------------------------
+class Zombie {
+    Zombie(std::string name);  // Solo este constructor
+};
+
+Zombie *arr = new Zombie[3];   // ERROR! No sabe que nombre poner
+
+// Solucion: anadir constructor por defecto
+class Zombie {
+    Zombie(void);              // Constructor por defecto
+    Zombie(std::string name);  // Constructor con nombre
+    void setName(std::string); // Para asignar nombre despues
+};
+
+Zombie *arr = new Zombie[3];   // OK, usa constructor por defecto
+arr[0].setName("Juan");        // Asignamos nombre despues
+
+
+================================================================================
+                        ACCESO A ELEMENTOS
+================================================================================
+
+Con puntero a array:
+    Zombie *horde = new Zombie[5];
+
+    horde[0]        // Primer zombie
+    horde[1]        // Segundo zombie
+    *(horde + 2)    // Tercer zombie (forma alternativa)
+
+    horde[i].announce()    // Metodo del zombie i
+
+
+================================================================================
+                        COMO PROBAR
+================================================================================
+
+1. Compila: make
+2. Ejecuta: ./zombieHorde
+3. Observa:
+   - Se crean 5 zombies
+   - Todos se anuncian
+   - Todos se destruyen (5 mensajes "is dead")
+
+4. Verifica con valgrind:
+   valgrind --leak-check=full ./zombieHorde
+
+   Debe decir: "All heap blocks were freed -- no leaks are possible"
+
+
+================================================================================
+                        RESUMEN
+================================================================================
+
++------------------+-------------------------+
+| Accion           | Sintaxis                |
++------------------+-------------------------+
+| Crear 1 objeto   | new Zombie("n")         |
+| Crear N objetos  | new Zombie[N]           |
+| Destruir 1       | delete ptr              |
+| Destruir array   | delete[] ptr            |
+| Acceder elemento | ptr[i] o *(ptr + i)     |
++------------------+-------------------------+
+
+================================================================================

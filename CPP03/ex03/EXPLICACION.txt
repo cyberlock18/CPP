@@ -1,0 +1,51 @@
+EJERCICIO 03 - DiamondTrap (Herencia multiple / Problema del diamante)
+======================================================================
+
+QUE APRENDES:
+- Herencia multiple: heredar de DOS clases a la vez
+- El problema del diamante y como resolverlo con herencia virtual
+- Variable shadowing (ocultar una variable del padre)
+- using para elegir que funcion heredar
+
+EL PROBLEMA DEL DIAMANTE:
+  Sin herencia virtual:
+       ClapTrap    ClapTrap      <- DOS copias de ClapTrap!
+          |            |
+       ScavTrap    FragTrap
+           \        /
+          DiamondTrap             <- Ambiguo: que ClapTrap uso?
+
+  Con herencia virtual (virtual public ClapTrap):
+          ClapTrap                <- UNA sola copia
+         /        \
+     ScavTrap   FragTrap
+         \        /
+        DiamondTrap               <- Sin ambiguedad!
+
+LA SOLUCION:
+  1. ScavTrap y FragTrap heredan con "virtual public ClapTrap"
+  2. DiamondTrap llama al constructor de ClapTrap directamente
+     (con herencia virtual, la clase mas derivada inicializa la base virtual)
+
+VARIABLE SHADOWING:
+  DiamondTrap tiene su propio _name que "oculta" ClapTrap::_name
+  - DiamondTrap::_name = "Diamondy" (el nombre real)
+  - ClapTrap::_name = "Diamondy_clap_name" (con sufijo)
+  Para acceder al de ClapTrap usamos ClapTrap::_name
+
+ATRIBUTOS DE DIAMONDTRAP:
+  - _name: propio
+  - HP: de FragTrap (100)
+  - EP: de ScavTrap (50)
+  - AD: de FragTrap (30)
+  - attack(): de ScavTrap (usando "using ScavTrap::attack")
+
+FLAG -Wno-shadow:
+  Necesario en el Makefile porque DiamondTrap::_name oculta ClapTrap::_name
+  y -Wshadow daria warning. El subject lo menciona como pista.
+
+ORDEN DE CONSTRUCCION:
+  ClapTrap -> FragTrap -> ScavTrap -> DiamondTrap
+
+ORDEN DE DESTRUCCION (inverso):
+  DiamondTrap -> ScavTrap -> FragTrap -> ClapTrap

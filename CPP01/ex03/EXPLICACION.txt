@@ -1,0 +1,162 @@
+================================================================================
+                         CPP01 - EJERCICIO 03
+               CUANDO USAR REFERENCIA vs PUNTERO
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Entender cuando usar REFERENCIA y cuando usar PUNTERO como atributo de clase
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. EL PROBLEMA
+--------------
+Queremos que HumanA y HumanB tengan un Weapon.
+Pero hay diferencias:
+- HumanA SIEMPRE tiene arma
+- HumanB PUEDE no tener arma
+
+Esto determina si usamos referencia o puntero.
+
+
+2. HUMANA CON REFERENCIA
+------------------------
+class HumanA {
+    Weapon &_weapon;  // REFERENCIA
+};
+
+- SIEMPRE tiene arma (referencia no puede ser NULL)
+- Se DEBE inicializar en el constructor
+- NO puede cambiar a que referencia apunta
+
+
+3. HUMANB CON PUNTERO
+---------------------
+class HumanB {
+    Weapon *_weapon;  // PUNTERO
+};
+
+- PUEDE no tener arma (puntero puede ser NULL)
+- Se puede asignar despues del constructor
+- PUEDE cambiar a que apunta
+
+
+================================================================================
+                        TABLA COMPARATIVA
+================================================================================
+
++-------------------+------------------+------------------+
+|                   |    REFERENCIA    |     PUNTERO      |
++-------------------+------------------+------------------+
+| Puede ser NULL    | NO               | SI               |
+| Inicializacion    | En constructor   | Cuando quieras   |
+| Puede cambiar     | NO               | SI               |
+| Sintaxis acceso   | obj.metodo()     | ptr->metodo()    |
+| Uso tipico        | Obligatorio      | Opcional         |
++-------------------+------------------+------------------+
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: POR QUE REFERENCIA PARA HUMANA?
+------------------------------------------
+HumanA bob("Bob", club);  // Arma obligatoria en constructor
+
+// Si intentamos crear HumanA sin arma:
+// HumanA bob("Bob");     // ERROR! Falta el arma
+
+// La referencia OBLIGA a tener siempre un arma
+
+
+EJEMPLO 2: POR QUE PUNTERO PARA HUMANB?
+---------------------------------------
+HumanB jim("Jim");        // OK, sin arma
+jim.attack();             // "Jim has no weapon"
+
+jim.setWeapon(espada);    // Ahora tiene espada
+jim.attack();             // "Jim attacks with espada"
+
+jim.setWeapon(maza);      // Cambia a maza
+jim.attack();             // "Jim attacks with maza"
+
+
+EJEMPLO 3: AMBOS VEN CAMBIOS EN EL ARMA ORIGINAL
+------------------------------------------------
+Weapon club("palo");
+
+HumanA bob("Bob", club);  // bob._weapon referencia a club
+HumanB jim("Jim");
+jim.setWeapon(club);      // jim._weapon apunta a club
+
+club.setType("espada");   // Cambiamos el arma original
+
+bob.attack();  // "espada" - ve el cambio por referencia
+jim.attack();  // "espada" - ve el cambio por puntero
+
+// Ambos ven el cambio porque NO tienen copias,
+// sino que apuntan/referencian al objeto original
+
+
+EJEMPLO 4: QUE PASARIA CON COPIA?
+---------------------------------
+class HumanMal {
+    Weapon _weapon;  // SIN & ni * = COPIA
+};
+
+Weapon club("palo");
+HumanMal malo("Malo", club);
+
+club.setType("espada");
+
+malo.attack();  // "palo" - NO ve el cambio!
+                // Porque _weapon es una COPIA independiente
+
+
+================================================================================
+                    SINTAXIS: . vs ->
+================================================================================
+
+Con REFERENCIA u OBJETO DIRECTO:
+    Weapon &_weapon;
+    _weapon.getType();     // Usamos PUNTO .
+
+Con PUNTERO:
+    Weapon *_weapon;
+    _weapon->getType();    // Usamos FLECHA ->
+
+    // La flecha es equivalente a:
+    (*_weapon).getType();  // Desreferenciar y luego punto
+
+
+================================================================================
+                     CONST EN GETTYPE
+================================================================================
+
+const std::string &getType(void) const;
+
+Desglose:
+1. const std::string & = devuelve referencia constante
+   - Referencia: eficiente, no copia
+   - Const: no se puede modificar el valor devuelto
+
+2. const al final = metodo constante
+   - Promete no modificar el objeto
+   - Puede llamarse en objetos const
+
+
+================================================================================
+                        RESUMEN FINAL
+================================================================================
+
+PREGUNTATE:
+- El atributo SIEMPRE existira? --> REFERENCIA
+- El atributo es OPCIONAL? --> PUNTERO
+- Puede cambiar despues? --> PUNTERO
+- Se conoce al crear el objeto? --> REFERENCIA
+
+================================================================================

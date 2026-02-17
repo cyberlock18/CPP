@@ -1,0 +1,30 @@
+EJERCICIO 01 - ScavTrap (Herencia basica)
+==========================================
+
+QUE APRENDES:
+- Herencia publica: ScavTrap hereda de ClapTrap
+- Atributos PROTECTED: accesibles por la clase y sus hijas
+- Sobreescribir funciones (attack tiene mensaje diferente)
+- Cadena de construccion/destruccion
+
+COMO FUNCIONA:
+- ScavTrap hereda TODO de ClapTrap (atributos y metodos)
+- Cambia los valores: HP=100, EP=50, AD=20
+- Tiene su propio attack() con mensaje "ScavTrap" en vez de "ClapTrap"
+- Tiene habilidad especial: guardGate()
+
+CADENA DE CONSTRUCCION:
+  Crear ScavTrap -> primero se construye ClapTrap, luego ScavTrap
+  Destruir ScavTrap -> primero se destruye ScavTrap, luego ClapTrap
+  (Orden inverso! Como una pila LIFO)
+
+POR QUE PROTECTED?
+  En ex00 los atributos eran private. Ahora son protected para que
+  ScavTrap pueda acceder a _name, _hitPoints, etc. directamente.
+  - private: solo la clase
+  - protected: la clase + sus hijas
+  - public: todo el mundo
+
+SINTAXIS:
+  class ScavTrap : public ClapTrap { ... };
+  "public ClapTrap" = herencia publica (lo mas comun)

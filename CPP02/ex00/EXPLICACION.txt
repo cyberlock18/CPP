@@ -1,0 +1,177 @@
+================================================================================
+                         CPP02 - EJERCICIO 00
+                   ORTHODOX CANONICAL FORM (OCF)
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Aprender la "Orthodox Canonical Form" - los 4 elementos obligatorios
+que toda clase en C++ debe tener a partir de este modulo.
+
+
+================================================================================
+                     ORTHODOX CANONICAL FORM
+================================================================================
+
+Toda clase DEBE tener estos 4 elementos:
+
+1. CONSTRUCTOR POR DEFECTO
+   Fixed(void);
+   - Se llama al crear un objeto sin argumentos
+   - Fixed a;
+
+2. CONSTRUCTOR DE COPIA
+   Fixed(const Fixed &src);
+   - Se llama al crear un objeto copiando otro
+   - Fixed b(a);
+   - Fixed b = a;  // Tambien llama al de copia!
+
+3. OPERADOR DE ASIGNACION
+   Fixed &operator=(const Fixed &rhs);
+   - Se llama al asignar un objeto a otro YA EXISTENTE
+   - c = b;
+
+4. DESTRUCTOR
+   ~Fixed(void);
+   - Se llama al destruir el objeto
+
+
+================================================================================
+                 DIFERENCIA: COPIA vs ASIGNACION
+================================================================================
+
+CONSTRUCTOR DE COPIA - el objeto NO existe:
+    Fixed b(a);      // b se CREA copiando a
+    Fixed b = a;     // Igual, b se CREA
+
+OPERADOR DE ASIGNACION - el objeto YA existe:
+    Fixed c;         // c se crea (vacio)
+    c = b;           // c YA EXISTE, se le asigna b
+
+
+================================================================================
+                     NUMEROS DE PUNTO FIJO
+================================================================================
+
+QUE ES PUNTO FIJO?
+------------------
+Una forma de representar numeros decimales usando enteros.
+
+Dividimos los bits en dos partes:
+- Bits superiores: parte entera
+- Bits inferiores: parte fraccionaria
+
+Con 8 bits fraccionarios (como en este ejercicio):
+    valor_real = valor_interno / 256
+
+EJEMPLO:
+    _value = 256  --> valor_real = 256/256 = 1.0
+    _value = 128  --> valor_real = 128/256 = 0.5
+    _value = 64   --> valor_real = 64/256  = 0.25
+    _value = 1    --> valor_real = 1/256   = 0.00390625
+
+VENTAJAS vs FLOAT:
+- Mas rapido (operaciones de enteros)
+- Mas predecible (sin errores de precision de float)
+- Usado en graficos, audio, sistemas embebidos
+
+
+================================================================================
+                        STATIC CONST
+================================================================================
+
+static const int _fractionalBits = 8;
+
+STATIC:
+- La variable es COMPARTIDA por todas las instancias
+- Solo existe UNA copia, no una por objeto
+- Ahorra memoria
+
+CONST:
+- El valor NO se puede cambiar
+- Se define una vez y no cambia
+
+STATIC + CONST:
+- Constante de clase compartida
+- Perfecta para configuracion fija
+
+
+================================================================================
+                           EJEMPLOS
+================================================================================
+
+EJEMPLO 1: CUANDO SE LLAMA CADA COSA
+------------------------------------
+Fixed a;           // Constructor por defecto
+Fixed b(a);        // Constructor de copia
+Fixed c;           // Constructor por defecto
+c = b;             // Operador de asignacion
+
+// Al salir del scope:
+// Destructor de c
+// Destructor de b
+// Destructor de a
+// (orden inverso a la creacion)
+
+
+EJEMPLO 2: DIFERENCIA SUTIL
+---------------------------
+Fixed a;
+Fixed b = a;       // COPIA (b no existe, se crea)
+Fixed c;
+c = a;             // ASIGNACION (c ya existe)
+
+
+EJEMPLO 3: ASIGNACION ENCADENADA
+--------------------------------
+Fixed a, b, c;
+a = b = c;         // Funciona porque operator= devuelve *this
+
+// Se evalua como:
+// a = (b = c);
+// Primero: b = c; devuelve b
+// Luego: a = b;
+
+
+EJEMPLO 4: AUTO-ASIGNACION
+--------------------------
+Fixed a;
+a = a;             // Debemos proteger contra esto!
+
+// En operator=:
+if (this != &rhs)  // Si no son el mismo objeto
+    this->_value = rhs._value;
+
+
+================================================================================
+                     SINTAXIS OPERATOR=
+================================================================================
+
+Fixed &operator=(const Fixed &rhs)
+^^^^^  ^^^^^^^^  ^^^^^       ^^^
+|      |         |           |
+|      |         |           +-- Parametro: referencia constante
+|      |         +-- Es un operador
+|      +-- Nombre del operador
++-- Devuelve referencia (para a = b = c)
+
+DENTRO:
+    if (this != &rhs)     // Proteger auto-asignacion
+        this->_value = rhs._value;
+    return *this;         // Devolver referencia a nosotros
+
+
+================================================================================
+                        RESUMEN
+================================================================================
+
++------------------------+---------------------------+
+| Elemento               | Cuando se llama           |
++------------------------+---------------------------+
+| Constructor defecto    | Fixed a;                  |
+| Constructor copia      | Fixed b(a); o Fixed b=a; |
+| Operador asignacion    | c = b; (c ya existe)     |
+| Destructor             | Al salir del scope        |
++------------------------+---------------------------+
+
+================================================================================

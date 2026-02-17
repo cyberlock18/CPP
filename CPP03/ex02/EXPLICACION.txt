@@ -1,0 +1,18 @@
+EJERCICIO 02 - FragTrap (Otra clase derivada)
+==============================================
+
+QUE APRENDES:
+- Reforzar el concepto de herencia
+- Crear multiples clases derivadas de la misma base
+- Cada clase hija puede tener valores y habilidades diferentes
+
+COMO FUNCIONA:
+- FragTrap hereda de ClapTrap igual que ScavTrap
+- Stats diferentes: HP=100, EP=100, AD=30
+- Habilidad especial: highFivesGuys() (pide un high five)
+- NO sobreescribe attack(), usa el de ClapTrap
+
+NOTA:
+  Este ejercicio es casi igual que ex01 pero con FragTrap.
+  La idea es practicar y entender que puedes crear muchas clases
+  hijas de la misma clase base, cada una con su comportamiento propio.

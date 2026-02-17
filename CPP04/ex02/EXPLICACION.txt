@@ -1,0 +1,34 @@
+EJERCICIO 02 - Clase Abstracta
+===============================
+
+QUE APRENDES:
+- Clases abstractas: clases que NO se pueden instanciar
+- Funciones virtuales puras (= 0)
+- El prefijo 'A' como convencion de 42 para clases abstractas
+
+CLASE ABSTRACTA:
+  Una clase es abstracta cuando tiene al menos una funcion virtual pura.
+  Funcion virtual pura = tiene "= 0" al final:
+    virtual void makeSound(void) const = 0;
+
+  Esto significa:
+  - No puedes crear un objeto AAnimal directamente
+    AAnimal a; // ERROR de compilacion!
+  - Las clases hijas DEBEN implementar makeSound()
+  - Si puedes usar punteros: AAnimal* a = new Dog(); // OK
+
+POR QUE ABSTRACTA?
+  No tiene sentido crear un "Animal generico" que no sabe que sonido hacer.
+  Un animal siempre es algo concreto: un perro, un gato, etc.
+  La clase abstracta obliga a que solo puedas crear objetos concretos.
+
+CAMBIOS RESPECTO A EX01:
+  - Animal -> AAnimal (prefijo 'A' = Abstract)
+  - makeSound() ahora es "= 0" (pura virtual)
+  - Ya no se puede hacer new AAnimal()
+  - Todo lo demas funciona igual (Brain, deep copy, etc.)
+
+NOTA:
+  AAnimal.cpp todavia tiene constructor y destructor aunque sea abstracta.
+  Las clases abstractas SI pueden tener implementaciones de funciones no-puras.
+  Lo unico que no pueden es ser instanciadas directamente.

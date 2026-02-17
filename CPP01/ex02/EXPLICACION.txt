@@ -1,0 +1,168 @@
+================================================================================
+                         CPP01 - EJERCICIO 02
+                     PUNTEROS vs REFERENCIAS
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Entender la diferencia entre PUNTEROS y REFERENCIAS en C++
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. QUE ES UN PUNTERO?
+---------------------
+Un puntero es una variable que guarda una DIRECCION DE MEMORIA.
+
+    int x = 42;
+    int *ptr = &x;   // ptr guarda la direccion de x
+
+    Simbolos:
+    * (en declaracion) = "esto es un puntero"
+    & (delante de variable) = "dame la direccion de..."
+    * (delante de puntero) = "dame el valor en esa direccion"
+
+
+2. QUE ES UNA REFERENCIA?
+-------------------------
+Una referencia es un ALIAS (otro nombre) para una variable existente.
+
+    int x = 42;
+    int &ref = x;    // ref es otro nombre para x
+
+    Simbolo:
+    & (en declaracion) = "esto es una referencia"
+
+
+3. DIFERENCIAS CLAVE
+--------------------
++------------------+------------------+------------------+
+|                  |    PUNTERO       |   REFERENCIA     |
++------------------+------------------+------------------+
+| Declaracion      | int *ptr         | int &ref         |
+| Puede ser NULL   | SI               | NO               |
+| Puede cambiar    | SI               | NO               |
+| Acceso al valor  | *ptr             | ref              |
+| Inicializacion   | Puede ser luego  | Obligatoria      |
++------------------+------------------+------------------+
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: PUNTERO BASICO
+-------------------------
+int x = 42;
+int *ptr = &x;      // ptr guarda direccion de x
+
+cout << x;          // 42 (valor)
+cout << &x;         // 0x7fff... (direccion)
+cout << ptr;        // 0x7fff... (misma direccion)
+cout << *ptr;       // 42 (valor en esa direccion)
+
+*ptr = 100;         // Modificamos x a traves del puntero
+cout << x;          // 100
+
+
+EJEMPLO 2: REFERENCIA BASICA
+----------------------------
+int x = 42;
+int &ref = x;       // ref es alias de x
+
+cout << x;          // 42
+cout << ref;        // 42 (son lo mismo!)
+cout << &x;         // 0x7fff...
+cout << &ref;       // 0x7fff... (misma direccion!)
+
+ref = 100;          // Modificamos x a traves de ref
+cout << x;          // 100
+
+
+EJEMPLO 3: PUNTERO PUEDE SER NULL
+---------------------------------
+int *ptr = NULL;    // OK, puntero sin apuntar a nada
+// int &ref;        // ERROR! Referencia debe inicializarse
+
+
+EJEMPLO 4: PUNTERO PUEDE CAMBIAR
+--------------------------------
+int a = 10;
+int b = 20;
+
+int *ptr = &a;      // ptr apunta a 'a'
+cout << *ptr;       // 10
+
+ptr = &b;           // Ahora ptr apunta a 'b'
+cout << *ptr;       // 20
+
+// Una referencia NO puede cambiar:
+int &ref = a;       // ref es alias de 'a' PARA SIEMPRE
+// &ref = b;        // NO SE PUEDE! ref siempre sera 'a'
+
+
+EJEMPLO 5: EN FUNCIONES
+-----------------------
+// Con puntero:
+void duplicar_ptr(int *n) {
+    *n = *n * 2;
+}
+
+// Con referencia:
+void duplicar_ref(int &n) {
+    n = n * 2;
+}
+
+int main() {
+    int x = 5;
+
+    duplicar_ptr(&x);   // Pasamos direccion
+    cout << x;          // 10
+
+    duplicar_ref(x);    // Pasamos directamente (parece por valor)
+    cout << x;          // 20
+}
+
+
+================================================================================
+                     CUANDO USAR CADA UNO?
+================================================================================
+
+USA REFERENCIA cuando:
+- Quieres un alias simple
+- Nunca sera NULL
+- No va a cambiar a que se refiere
+
+USA PUNTERO cuando:
+- Puede ser NULL (opcional)
+- Necesitas cambiar a que apunta
+- Trabajas con memoria dinamica (new/delete)
+
+
+================================================================================
+                        SIMBOLOS RESUMEN
+================================================================================
+
+EN DECLARACION:
+    int *ptr;      // ptr es puntero a int
+    int &ref = x;  // ref es referencia a x
+
+EN USO:
+    &variable      // Direccion de variable
+    *puntero       // Valor en la direccion del puntero
+
+TABLA PRACTICA:
+    int x = 42;
+    int *ptr = &x;
+    int &ref = x;
+
+    x       -->  42          (valor)
+    &x      -->  0x7fff...   (direccion)
+    ptr     -->  0x7fff...   (direccion guardada)
+    *ptr    -->  42          (valor en esa direccion)
+    ref     -->  42          (valor, es alias)
+    &ref    -->  0x7fff...   (misma direccion que x)
+
+================================================================================

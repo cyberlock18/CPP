@@ -1,0 +1,36 @@
+EJERCICIO 00 - Polimorfismo
+============================
+
+QUE APRENDES:
+- Polimorfismo: la capacidad de que un puntero de tipo base (Animal*)
+  llame a la funcion correcta del hijo (Dog o Cat)
+- La palabra clave "virtual" y por que es necesaria
+- Destructor virtual: imprescindible cuando borras objetos hijos
+  a traves de un puntero del padre
+
+COMO FUNCIONA:
+- Animal es la clase base con _type (protected) y makeSound() virtual
+- Dog hereda de Animal, pone _type = "Dog", makeSound = "Woof! Woof!"
+- Cat hereda de Animal, pone _type = "Cat", makeSound = "Meow! Meow!"
+
+POR QUE VIRTUAL?
+  Animal* a = new Dog();
+  a->makeSound();
+
+  SIN virtual: llama a Animal::makeSound() (sonido generico) MAL!
+  CON virtual: llama a Dog::makeSound() (Woof!) BIEN!
+
+  El compilador mira el tipo REAL del objeto, no el tipo del puntero.
+  Esto se llama "enlace dinamico" o "late binding".
+
+WRONGANIMAL / WRONGCAT:
+  Son la demostracion de lo que pasa SIN virtual.
+  WrongAnimal* w = new WrongCat();
+  w->makeSound(); // Siempre dice "WrongAnimal sound" en vez de "Meow"
+  Porque sin virtual, el compilador mira el tipo del puntero (WrongAnimal),
+  no el tipo real del objeto (WrongCat).
+
+DESTRUCTOR VIRTUAL:
+  Si haces delete en un Animal* que apunta a un Dog,
+  sin destructor virtual solo se llama ~Animal() (memory leak del Dog!)
+  Con destructor virtual se llama ~Dog() y luego ~Animal() (correcto!)

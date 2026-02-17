@@ -1,0 +1,41 @@
+EJERCICIO 01 - Brain y Deep Copy
+=================================
+
+QUE APRENDES:
+- Memoria dinamica: new y delete para crear/destruir objetos en el heap
+- Deep copy vs Shallow copy
+- Destructor virtual para evitar memory leaks al borrar como Animal*
+
+BRAIN:
+  Clase con un array de 100 std::string llamado ideas.
+  Dog y Cat tienen un Brain* (puntero a Brain).
+
+DEEP COPY vs SHALLOW COPY:
+  Shallow copy (MAL):
+    Dog a;
+    Dog b = a;  // b._brain apunta al MISMO Brain que a._brain
+    // Si borras a, b._brain apunta a memoria liberada -> CRASH!
+
+  Deep copy (BIEN):
+    Dog a;
+    Dog b = a;  // b._brain es un NUEVO Brain con las mismas ideas
+    // Cada Dog tiene su propio Brain independiente
+
+COMO SE HACE DEEP COPY:
+  En el constructor de copia y operator=:
+    _brain = new Brain(*src._brain);  // Crea un Brain nuevo copiando el contenido
+
+  En operator= ademas hay que borrar el Brain viejo:
+    delete _brain;
+    _brain = new Brain(*rhs._brain);
+
+DESTRUCTOR:
+  Dog y Cat hacen "delete _brain" en su destructor.
+  Gracias al destructor virtual de Animal, al hacer:
+    Animal* a = new Dog();
+    delete a;  // Llama a ~Dog() que hace delete _brain, luego ~Animal()
+
+ARRAY DE ANIMALES:
+  Se crea un array de Animal*, mitad Dogs y mitad Cats.
+  Al borrar, se hace delete de cada Animal* y gracias al destructor
+  virtual se llama al destructor correcto (Dog o Cat).

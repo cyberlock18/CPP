@@ -1,0 +1,170 @@
+================================================================================
+                         CPP02 - EJERCICIO 01
+              CONVERSIONES Y SOBRECARGA DE OPERATOR<<
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+- Convertir entre int/float y punto fijo
+- Sobrecargar el operador << para imprimir
+
+
+================================================================================
+                     CONVERSION INT -> PUNTO FIJO
+================================================================================
+
+Para convertir un entero a punto fijo:
+    _value = n << 8   (equivale a n * 256)
+
+EJEMPLO:
+    Fixed a(10);
+    _value = 10 << 8 = 10 * 256 = 2560
+
+    Para recuperar el valor: 2560 / 256 = 10.0
+
+VISUALIZACION EN BITS:
+    n = 10 = 00001010 (8 bits)
+    n << 8 = 00001010 00000000 (16 bits)
+             ^^^^^^^  ^^^^^^^^
+             entero   fraccion (todo ceros = .0)
+
+
+================================================================================
+                    CONVERSION FLOAT -> PUNTO FIJO
+================================================================================
+
+Para convertir un float a punto fijo:
+    _value = roundf(f * 256)
+
+EJEMPLO:
+    Fixed b(42.42f);
+    42.42 * 256 = 10859.52
+    roundf(10859.52) = 10860
+    _value = 10860
+
+    Para recuperar: 10860 / 256 = 42.421875
+    (Perdemos precision, es normal en punto fijo)
+
+
+================================================================================
+                    CONVERSION PUNTO FIJO -> FLOAT
+================================================================================
+
+    float toFloat() { return (float)_value / 256; }
+
+EJEMPLO:
+    _value = 10860
+    10860 / 256.0 = 42.421875f
+
+
+================================================================================
+                    CONVERSION PUNTO FIJO -> INT
+================================================================================
+
+    int toInt() { return _value >> 8; }
+
+EJEMPLO:
+    _value = 10860
+    10860 >> 8 = 42 (se descartan los decimales)
+
+
+================================================================================
+                   OPERADORES DE BITS: << y >>
+================================================================================
+
+<< DESPLAZAMIENTO A LA IZQUIERDA:
+    n << k = n * 2^k
+
+    Ejemplo: 5 << 3 = 5 * 8 = 40
+             00000101 << 3 = 00101000
+
+>> DESPLAZAMIENTO A LA DERECHA:
+    n >> k = n / 2^k (division entera)
+
+    Ejemplo: 40 >> 3 = 40 / 8 = 5
+             00101000 >> 3 = 00000101
+
+
+================================================================================
+                    SOBRECARGA DE OPERATOR<<
+================================================================================
+
+Queremos poder hacer:
+    Fixed a(42.42f);
+    std::cout << a;  // Imprime "42.4219"
+
+Para esto sobrecargamos operator<<:
+
+    std::ostream &operator<<(std::ostream &out, const Fixed &fixed)
+    {
+        out << fixed.toFloat();
+        return out;
+    }
+
+DESGLOSE:
+    std::ostream &          --> Devuelve referencia al stream
+    operator<<              --> Nombre del operador
+    (std::ostream &out,     --> Primer parametro: el stream (cout)
+     const Fixed &fixed)    --> Segundo parametro: lo que imprimimos
+
+    return out;             --> Para poder encadenar: cout << a << b;
+
+
+POR QUE NO ES METODO DE LA CLASE?
+---------------------------------
+Si fuera metodo, la sintaxis seria:
+    a.operator<<(cout);  // a << cout  <-- Al reves!
+
+Queremos cout << a, asi que el primer parametro debe ser cout.
+Por eso es una funcion externa.
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: CONVERSIONES
+-----------------------
+Fixed a(10);          // Int: _value = 2560
+Fixed b(10.5f);       // Float: _value = 2688
+
+cout << a.toFloat();  // 10.0
+cout << a.toInt();    // 10
+cout << b.toFloat();  // 10.5
+cout << b.toInt();    // 10 (trunca decimales)
+
+
+EJEMPLO 2: PERDIDA DE PRECISION
+-------------------------------
+Fixed c(42.42f);
+
+cout << c.toFloat();  // 42.4219 (no exactamente 42.42)
+
+// Esto es normal! Punto fijo tiene precision limitada
+// Con 8 bits fraccionarios, la precision es 1/256 = 0.00390625
+
+
+EJEMPLO 3: OPERATOR<<
+---------------------
+Fixed a(5);
+Fixed b(3.14f);
+
+cout << a << " y " << b << endl;  // "5 y 3.14063"
+
+// Funciona porque operator<< devuelve el stream
+
+
+================================================================================
+                          TABLA RESUMEN
+================================================================================
+
++------------------+-------------------+-------------------------+
+| Conversion       | Formula           | Ejemplo                 |
++------------------+-------------------+-------------------------+
+| int -> fixed     | n << 8            | 10 -> 2560              |
+| float -> fixed   | roundf(f * 256)   | 42.42 -> 10860          |
+| fixed -> float   | _value / 256.0    | 10860 -> 42.421875      |
+| fixed -> int     | _value >> 8       | 10860 -> 42             |
++------------------+-------------------+-------------------------+
+
+================================================================================

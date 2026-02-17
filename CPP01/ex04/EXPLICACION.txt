@@ -1,0 +1,186 @@
+================================================================================
+                         CPP01 - EJERCICIO 04
+                    MANEJO DE ARCHIVOS Y STRINGS
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+- Aprender a leer y escribir archivos en C++
+- Manipular strings sin usar std::string::replace (prohibido)
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. STREAMS DE ARCHIVOS
+----------------------
+C++ usa "streams" (flujos) para manejar archivos:
+
+- ifstream = Input File Stream (LEER)
+- ofstream = Output File Stream (ESCRIBIR)
+- fstream  = Ambos (leer y escribir)
+
+    #include <fstream>
+
+    ifstream infile("archivo.txt");   // Abrir para leer
+    ofstream outfile("salida.txt");   // Abrir para escribir
+
+
+2. OPERACIONES CON ARCHIVOS
+---------------------------
+    // Abrir
+    ifstream file("nombre.txt");
+
+    // Comprobar si abrio bien
+    if (!file.is_open()) { /* error */ }
+
+    // Leer linea por linea
+    string line;
+    while (getline(file, line)) {
+        // procesar line
+    }
+
+    // Cerrar
+    file.close();
+
+
+3. METODOS DE STRING USADOS
+---------------------------
+- find(s, pos): busca s desde la posicion pos, devuelve posicion o npos
+- substr(pos, len): extrae subcadena desde pos de longitud len
+- length(): devuelve la longitud del string
+- empty(): devuelve true si el string esta vacio
+- += : concatena strings
+
+
+================================================================================
+                        ALGORITMO DE REEMPLAZO
+================================================================================
+
+Ejemplo: reemplazar "mundo" por "MUNDO" en "Hola mundo, mundo!"
+
+    content = "Hola mundo, mundo!"
+    s1 = "mundo"
+    s2 = "MUNDO"
+
+    PASO 1: find("mundo", 0) = 5
+            result = "Hola " + "MUNDO"
+            pos = 5 + 5 = 10
+
+    PASO 2: find("mundo", 10) = 12
+            result = "Hola MUNDO" + ", " + "MUNDO"
+            pos = 12 + 5 = 17
+
+    PASO 3: find("mundo", 17) = npos (no encontrado)
+            result = "Hola MUNDO, MUNDO" + "!"
+
+    RESULTADO: "Hola MUNDO, MUNDO!"
+
+
+VISUALIZACION:
+    "Hola mundo, mundo!"
+          ^^^^^  ^^^^^
+          |      |
+          |      +-- Segunda ocurrencia (pos 12)
+          +-- Primera ocurrencia (pos 5)
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: LEER UN ARCHIVO COMPLETO
+-----------------------------------
+#include <fstream>
+#include <string>
+
+ifstream file("test.txt");
+string content;
+string line;
+
+while (getline(file, line)) {
+    content += line + "\n";
+}
+file.close();
+
+
+EJEMPLO 2: ESCRIBIR EN UN ARCHIVO
+---------------------------------
+ofstream file("output.txt");
+
+file << "Primera linea" << endl;
+file << "Segunda linea" << endl;
+
+file.close();
+
+
+EJEMPLO 3: find() Y substr()
+----------------------------
+string s = "Hola mundo";
+
+size_t pos = s.find("mundo");  // pos = 5
+
+string parte1 = s.substr(0, pos);      // "Hola "
+string parte2 = s.substr(pos);         // "mundo"
+string parte3 = s.substr(pos, 3);      // "mun"
+
+
+EJEMPLO 4: npos
+---------------
+string s = "Hola";
+size_t pos = s.find("xyz");
+
+if (pos == string::npos) {
+    cout << "No encontrado";
+}
+
+
+================================================================================
+                        c_str() - POR QUE?
+================================================================================
+
+En C++98, ifstream y ofstream NO aceptan std::string directamente.
+Solo aceptan const char* (cadena estilo C).
+
+    string filename = "test.txt";
+
+    ifstream file(filename);          // ERROR en C++98!
+    ifstream file(filename.c_str());  // OK
+
+c_str() devuelve un puntero a la cadena de caracteres interna del string.
+
+
+================================================================================
+                        COMO PROBAR
+================================================================================
+
+1. Crea un archivo de prueba:
+   echo "Hola mundo, mundo cruel" > test.txt
+
+2. Compila y ejecuta:
+   make
+   ./sed test.txt mundo MUNDO
+
+3. Verifica el resultado:
+   cat test.txt.replace
+   # Deberia mostrar: Hola MUNDO, MUNDO cruel
+
+
+================================================================================
+                        ERRORES COMUNES
+================================================================================
+
+1. Olvidar cerrar archivos
+   - Solucion: usar file.close()
+
+2. No comprobar si el archivo se abrio
+   - Solucion: if (!file.is_open()) { error }
+
+3. Usar string::replace (prohibido!)
+   - Solucion: usar find() + substr() + concatenacion
+
+4. No manejar s1 vacio
+   - Solucion: if (s1.empty()) return content;
+
+================================================================================

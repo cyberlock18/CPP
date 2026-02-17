@@ -1,0 +1,21 @@
+EJERCICIO 00 - ClapTrap (Clase base)
+=====================================
+
+QUE APRENDES:
+- Crear una clase con atributos privados
+- Orthodox Canonical Form (OCF): constructor defecto, copia, operador=, destructor
+- Funciones miembro que modifican el estado del objeto
+- Logica basica de un personaje de juego (vida, energia, dano)
+
+COMO FUNCIONA:
+- ClapTrap es un robot con vida (10), energia (10) y dano (0)
+- attack(): gasta 1 energia, muestra mensaje con el dano causado
+- takeDamage(): reduce la vida segun el dano recibido
+- beRepaired(): gasta 1 energia, recupera vida
+- Si no tiene vida o energia, no puede hacer nada
+
+CONCEPTOS CLAVE:
+- Atributos PRIVATE: solo accesibles desde la propia clase
+- unsigned int: numeros sin signo (no negativos)
+- Lista de inicializacion: ClapTrap() : _name("x"), _hitPoints(10) ...
+  Es la forma correcta de inicializar atributos en el constructor

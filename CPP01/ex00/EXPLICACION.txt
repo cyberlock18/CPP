@@ -1,0 +1,151 @@
+================================================================================
+                         CPP01 - EJERCICIO 00
+                        STACK vs HEAP en C++
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Entender la diferencia entre crear objetos en el STACK y en el HEAP.
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. QUE ES UNA CLASE?
+--------------------
+Una clase es como un "plano" o "molde" para crear objetos.
+Define que atributos (variables) y metodos (funciones) tendran los objetos.
+
+    class Zombie {
+        private:
+            std::string _name;    // Atributo
+        public:
+            void announce();      // Metodo
+    };
+
+
+2. CONSTRUCTOR Y DESTRUCTOR
+---------------------------
+- CONSTRUCTOR: Funcion que se ejecuta al CREAR un objeto
+  Tiene el mismo nombre que la clase: Zombie()
+
+- DESTRUCTOR: Funcion que se ejecuta al DESTRUIR un objeto
+  Tiene el nombre de la clase con ~ delante: ~Zombie()
+
+Ejemplo:
+    Zombie z("Pepe");   // Se llama al constructor
+    // ... usar z ...
+    // Al salir del ambito, se llama al destructor automaticamente
+
+
+3. STACK vs HEAP
+----------------
+
++------------------+------------------------+------------------------+
+|                  |        STACK           |         HEAP           |
++------------------+------------------------+------------------------+
+| Como crear       | Zombie z("nombre");    | Zombie *z = new Zombie |
+| Como acceder     | z.announce();          | z->announce();         |
+| Como destruir    | Automatico             | delete z;              |
+| Cuando se destruye| Al salir del {}       | Cuando tu hagas delete |
+| Peligro          | Ninguno                | Memory leak si olvidas |
+|                  |                        | hacer delete           |
++------------------+------------------------+------------------------+
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: STACK (memoria automatica)
+-------------------------------------
+void funcion() {
+    Zombie z("Stack");      // Se crea en el stack
+    z.announce();           // Lo usamos
+}   // <-- AQUI se destruye automaticamente
+
+// Fuera de la funcion, z ya NO EXISTE
+
+
+EJEMPLO 2: HEAP (memoria dinamica)
+----------------------------------
+Zombie* crearZombie() {
+    Zombie *z = new Zombie("Heap");   // Se crea en el heap
+    return z;                          // Devolvemos el puntero
+}   // El zombie sigue vivo!
+
+int main() {
+    Zombie *miZombie = crearZombie();  // Recibimos el puntero
+    miZombie->announce();              // Lo usamos
+    delete miZombie;                   // OBLIGATORIO: liberar memoria
+    return 0;
+}
+
+
+EJEMPLO 3: POR QUE NO FUNCIONA DEVOLVER UN OBJETO DEL STACK?
+------------------------------------------------------------
+// ESTO ESTA MAL:
+Zombie* funcionMala() {
+    Zombie z("Local");    // Se crea en el stack
+    return &z;            // Devolvemos la direccion
+}   // z se destruye aqui... el puntero apunta a basura!
+
+
+================================================================================
+                        PUNTEROS BASICO
+================================================================================
+
+Un PUNTERO es una variable que guarda una DIRECCION DE MEMORIA.
+
+    int x = 42;
+    int *ptr = &x;    // ptr guarda la direccion de x
+
+    cout << x;        // Imprime: 42
+    cout << ptr;      // Imprime: 0x7fff... (una direccion)
+    cout << *ptr;     // Imprime: 42 (el valor en esa direccion)
+
+Con objetos:
+    Zombie *z = new Zombie("Test");
+
+    z           // Direccion de memoria donde esta el zombie
+    *z          // El zombie en si
+    z->announce() // Acceder a metodo (equivale a (*z).announce())
+
+
+================================================================================
+                        SINTAXIS IMPORTANTE
+================================================================================
+
+CREAR OBJETOS:
+    Zombie z("nombre");           // En stack
+    Zombie *z = new Zombie("n");  // En heap
+
+ACCEDER A METODOS:
+    z.announce();      // Con objeto normal (stack)
+    z->announce();     // Con puntero (heap)
+
+DESTRUIR:
+    // Stack: automatico
+    delete z;          // Heap: manual
+
+LISTA DE INICIALIZACION:
+    Zombie::Zombie(std::string name) : _name(name) {}
+    // Es mas eficiente que:
+    // Zombie::Zombie(std::string name) { _name = name; }
+
+
+================================================================================
+                        COMO PROBAR
+================================================================================
+
+1. Compila: make
+2. Ejecuta: ./zombie
+3. Observa el output:
+   - El zombie del heap se destruye cuando hacemos delete
+   - El zombie del stack se destruye al salir de randomChump()
+
+4. Prueba con valgrind para ver que no hay leaks:
+   valgrind --leak-check=full ./zombie
+
+================================================================================

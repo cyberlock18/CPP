@@ -1,0 +1,196 @@
+================================================================================
+                         CPP01 - EJERCICIO 05
+                   PUNTEROS A FUNCIONES MIEMBRO
+================================================================================
+
+OBJETIVO DEL EJERCICIO:
+-----------------------
+Aprender a usar PUNTEROS A FUNCIONES MIEMBRO de una clase
+
+
+================================================================================
+                           CONCEPTOS CLAVE
+================================================================================
+
+1. QUE ES UN PUNTERO A FUNCION?
+-------------------------------
+Es una variable que guarda la DIRECCION de una funcion.
+Permite llamar a diferentes funciones de forma dinamica.
+
+    // Puntero a funcion normal (no miembro):
+    void (*ptr)(int);        // Declaracion
+    ptr = &miFuncion;        // Asignacion
+    ptr(42);                 // Llamada
+
+
+2. PUNTERO A FUNCION MIEMBRO
+----------------------------
+Similar, pero para metodos de una clase.
+La sintaxis es mas compleja porque necesita saber:
+- A que clase pertenece
+- Sobre que objeto llamarla
+
+    // Puntero a funcion MIEMBRO:
+    void (Clase::*ptr)(void);    // Declaracion
+    ptr = &Clase::metodo;        // Asignacion
+    (objeto.*ptr)();             // Llamada con objeto
+    (puntero->*ptr)();           // Llamada con puntero a objeto
+
+
+3. SINTAXIS DETALLADA
+---------------------
+DECLARACION:
+    void (Harl::*functionPtr)(void);
+    ^^^^  ^^^^  ^^^^^^^^^^^^  ^^^^
+    |     |     |             |
+    |     |     |             +-- Parametros
+    |     |     +-- Nombre del puntero
+    |     +-- Clase a la que pertenece
+    +-- Tipo de retorno
+
+ASIGNACION:
+    functionPtr = &Harl::debug;
+                  ^
+                  +-- & es necesario para obtener la direccion
+
+LLAMADA:
+    (this->*functionPtr)();
+     ^^^^^ ^^^^^^^^^^^^^
+     |     |
+     |     +-- Desreferenciamos el puntero a funcion
+     +-- Objeto sobre el que llamamos
+
+
+================================================================================
+                              EJEMPLOS
+================================================================================
+
+EJEMPLO 1: PUNTERO A FUNCION SIMPLE (no miembro)
+------------------------------------------------
+void saludar() { cout << "Hola"; }
+void despedir() { cout << "Adios"; }
+
+int main() {
+    void (*ptr)();      // Declaramos puntero
+
+    ptr = &saludar;     // Apunta a saludar
+    ptr();              // Imprime: Hola
+
+    ptr = &despedir;    // Ahora apunta a despedir
+    ptr();              // Imprime: Adios
+}
+
+
+EJEMPLO 2: PUNTERO A FUNCION MIEMBRO
+------------------------------------
+class Calculadora {
+public:
+    int sumar(int a, int b) { return a + b; }
+    int restar(int a, int b) { return a - b; }
+};
+
+int main() {
+    // Declaramos puntero a funcion miembro
+    int (Calculadora::*operacion)(int, int);
+
+    Calculadora calc;
+
+    // Apuntamos a sumar
+    operacion = &Calculadora::sumar;
+    cout << (calc.*operacion)(5, 3);  // Imprime: 8
+
+    // Apuntamos a restar
+    operacion = &Calculadora::restar;
+    cout << (calc.*operacion)(5, 3);  // Imprime: 2
+}
+
+
+EJEMPLO 3: ARRAY DE PUNTEROS A FUNCIONES MIEMBRO
+------------------------------------------------
+class Harl {
+    void debug() { cout << "debug"; }
+    void info() { cout << "info"; }
+
+public:
+    void test() {
+        // Array de 2 punteros a funciones miembro
+        void (Harl::*funcs[2])(void) = {
+            &Harl::debug,
+            &Harl::info
+        };
+
+        // Llamamos a la primera (debug)
+        (this->*funcs[0])();
+
+        // Llamamos a la segunda (info)
+        (this->*funcs[1])();
+    }
+};
+
+
+EJEMPLO 4: EQUIVALENCIA CON IF/ELSE (lo que NO debemos hacer)
+-------------------------------------------------------------
+// ESTO ESTA PROHIBIDO en el ejercicio:
+void complain(string level) {
+    if (level == "DEBUG")
+        debug();
+    else if (level == "INFO")
+        info();
+    else if (level == "WARNING")
+        warning();
+    else if (level == "ERROR")
+        error();
+}
+
+// ESTO ES LO CORRECTO (punteros a funciones):
+void complain(string level) {
+    void (Harl::*funcs[4])(void) = { &Harl::debug, ... };
+    string levels[4] = { "DEBUG", ... };
+
+    for (int i = 0; i < 4; i++) {
+        if (levels[i] == level) {
+            (this->*funcs[i])();
+            return;
+        }
+    }
+}
+
+
+================================================================================
+                        VENTAJAS DE ESTE ENFOQUE
+================================================================================
+
+1. ESCALABILIDAD
+   - Anadir un nuevo nivel = anadir elemento a los arrays
+   - Con if/else = anadir mas condiciones
+
+2. MENOS CODIGO REPETITIVO
+   - Un bucle en lugar de multiples if/else
+
+3. MAS ELEGANTE
+   - Separa datos (arrays) de logica (bucle)
+
+4. OBLIGATORIO EN EL EJERCICIO
+   - El subject prohibe if/else if/else
+
+
+================================================================================
+                        SINTAXIS RESUMEN
+================================================================================
+
+PUNTERO A FUNCION NORMAL:
+    tipo (*nombre)(parametros);
+    nombre = &funcion;
+    nombre(args);
+
+PUNTERO A FUNCION MIEMBRO:
+    tipo (Clase::*nombre)(parametros);
+    nombre = &Clase::metodo;
+    (objeto.*nombre)(args);
+    (puntero->*nombre)(args);
+
+ARRAY DE PUNTEROS:
+    tipo (Clase::*nombre[N])(params) = { &Clase::m1, &Clase::m2, ... };
+    (objeto.*nombre[i])(args);
+
+================================================================================
