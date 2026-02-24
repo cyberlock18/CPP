@@ -2,62 +2,107 @@
 
 English | [Español](README.es.md)
 
-This repository contains my solutions for the 42 School **CPP Modules** (CPP00 → CPP04). Each module is split into exercises (ex00, ex01, …), each one with its own small program and (in most cases) a dedicated `Makefile`.
+This repository contains solutions for the 42 School **CPP Modules** (CPP00 to CPP04). Each module is a set of exercises (`ex00`, `ex01`, ...), each with its own small C++ program and a dedicated `Makefile`.
 
-## Contents
+## Project Structure
 
-- `CPP00/` – basics, compilation, classes, member functions
-- `CPP01/` – memory, references, pointers, file streams
-- `CPP02/` – ad-hoc polymorphism, operator overloading, canonical form
-- `CPP03/` – inheritance
-- `CPP04/` – subtype polymorphism, abstract classes, interfaces
-
-> Note: build/run is done per-exercise (inside `CPPXX/exYY/`).
-
-## Build & Run (from the repo’s Makefiles)
-
-Each exercise directory provides classic 42-style targets: `all`, `clean`, `fclean`, `re`.
-
-### Example: CPP00/ex00
-
-```sh
-cd CPP00/ex00
-make
-./megaphone
+```
+CPP/
+├── CPP00/   # Basics: classes, member functions, I/O
+│   ├── ex00/   → binary: megaphone
+│   ├── ex01/   → binary: phonebook
+│   └── ex02/   → binary: account
+├── CPP01/   # Memory, references, pointers, file streams
+│   ├── ex00/   → binary: zombie
+│   ├── ex01/   → binary: zombieHorde
+│   ├── ex02/   → binary: brain
+│   ├── ex03/   → binary: violence
+│   ├── ex04/   → binary: sed
+│   └── ex05/   → binary: harl
+├── CPP02/   # Operator overloading, fixed-point numbers, canonical form
+│   ├── ex00/   → binary: fixed
+│   ├── ex01/   → binary: fixed
+│   └── ex02/   → binary: fixed
+├── CPP03/   # Inheritance
+│   ├── ex00/   → binary: claptrap
+│   ├── ex01/   → binary: scavtrap
+│   ├── ex02/   → binary: fragtrap
+│   └── ex03/   → binary: diamondtrap
+└── CPP04/   # Subtype polymorphism, abstract classes, interfaces
+    ├── ex00/   → binary: animal
+    ├── ex01/   → binary: brain
+    └── ex02/   → binary: abstract
 ```
 
-### Example: CPP00/ex01
+> Build and run is done **per-exercise** (inside `CPPXX/exYY/`). There is no top-level Makefile.
+
+## Build & Run
+
+Every exercise directory exposes the standard 42-style Makefile targets: `all`, `clean`, `fclean`, `re`.
+All projects are compiled with `c++`, flags `-Wall -Wextra -Werror -std=c++98`.
+
+### CPP00
 
 ```sh
-cd CPP00/ex01
-make
-./phonebook
+cd CPP00/ex00 && make && ./megaphone
+cd CPP00/ex01 && make && ./phonebook
+cd CPP00/ex02 && make && ./account
 ```
 
-### Example: CPP00/ex02
+### CPP01
 
 ```sh
-cd CPP00/ex02
-make
-./account
+cd CPP01/ex00 && make && ./zombie
+cd CPP01/ex01 && make && ./zombieHorde
+cd CPP01/ex02 && make && ./brain
+cd CPP01/ex03 && make && ./violence
+cd CPP01/ex04 && make && ./sed
+cd CPP01/ex05 && make && ./harl
 ```
 
-To clean:
+### CPP02
 
 ```sh
-make clean   # removes objects
-make fclean  # removes objects + binary
-make re      # full rebuild
+cd CPP02/ex00 && make && ./fixed
+cd CPP02/ex01 && make && ./fixed
+cd CPP02/ex02 && make && ./fixed
 ```
 
-## What you learn / skills acquired
+### CPP03
 
-- Building C++98 projects with **Makefiles** (`all/clean/fclean/re`) and strict flags (`-Wall -Wextra -Werror`).
-- Writing classes following the **Orthodox Canonical Form** (constructors, copy, assignment, destructor).
-- Understanding **stack vs heap**, references, pointers, and basic resource/lifetime management.
-- Using **operator overloading** and const-correctness to model value types.
-- Applying **inheritance** and **polymorphism** (virtual functions, abstract classes) across small programs.
-- Practicing clean code structure across multiple independent exercises.
+```sh
+cd CPP03/ex00 && make && ./claptrap
+cd CPP03/ex01 && make && ./scavtrap
+cd CPP03/ex02 && make && ./fragtrap
+cd CPP03/ex03 && make && ./diamondtrap
+```
+
+### CPP04
+
+```sh
+cd CPP04/ex00 && make && ./animal
+cd CPP04/ex01 && make && ./brain
+cd CPP04/ex02 && make && ./abstract
+```
+
+### Utility targets (run from inside any exercise directory)
+
+```sh
+make clean   # remove object files
+make fclean  # remove object files and binary
+make re      # full rebuild (fclean + all)
+```
+
+## What You Learn / Skills Acquired
+
+- Building C++98 projects with **Makefiles** (`all/clean/fclean/re`) using strict compiler flags (`-Wall -Wextra -Werror`).
+- Writing classes following the **Orthodox Canonical Form** (default constructor, copy constructor, copy-assignment operator, destructor).
+- Understanding **stack vs heap** memory allocation, pointer arithmetic, and reference semantics.
+- Implementing **operator overloading** and fixed-point arithmetic to model numeric value types.
+- Applying **inheritance** (single and multiple/diamond) and understanding construction/destruction order.
+- Using **virtual functions**, **pure virtual functions**, and **abstract classes** to achieve runtime polymorphism.
+- Practicing interface design and the separation of abstract contracts from concrete implementations.
+- Managing resources and object lifetimes safely across multiple independent programs.
 
 ## Author
 
