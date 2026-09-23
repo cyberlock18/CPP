@@ -1,3 +1,27 @@
 *.pdf
 *.gz
 
+# Objetos y artefactos de compilacion
+*.o
+
+# Ejecutables
+cpp05/ex00/bureaucrat
+cpp05/ex01/form
+cpp05/ex02/aform
+cpp05/ex03/intern
+cpp06/ex00/convert
+cpp06/ex01/serializer
+cpp06/ex02/identify
+cpp07/ex00/whatever
+cpp07/ex01/iter
+cpp07/ex02/array
+cpp08/ex00/easyfind
+cpp08/ex01/span
+cpp08/ex02/mutantstack
+cpp09/ex00/btc
+cpp09/ex01/RPN
+cpp09/ex02/PmergeMe
+
+# Salidas generadas por los programas
+cpp05/ex02/garden_shrubbery
+cpp05/ex03/home_shrubbery
