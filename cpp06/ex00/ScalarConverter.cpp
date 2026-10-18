@@ -1,5 +1,6 @@
 #include "ScalarConverter.hpp"
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <cstdlib>
 #include <climits>
@@ -7,30 +8,39 @@
 #include <cerrno>
 #include <cmath>
 
-enum LiteralType { CHAR, INT, FLOAT, DOUBLE, SPECIAL };
+enum LiteralType { CHAR, INT, FLOAT, DOUBLE, SPECIAL, INVALID };
 
 static LiteralType detectType(std::string const& s)
 {
+	if (s.empty())
+		return INVALID;
+
 	if (s == "nan" || s == "+inf" || s == "-inf" ||
 		s == "nanf" || s == "+inff" || s == "-inff")
 		return SPECIAL;
 
+	if (s.length() == 3 && s[0] == '\'' && s[2] == '\'')
+		return CHAR;
 	if (s.length() == 1 && !std::isdigit(s[0]))
 		return CHAR;
 
-	bool hasDot = false;
-	bool hasF   = false;
-	size_t start = (s[0] == '-' || s[0] == '+') ? 1 : 0;
+	int    digits = 0;
+	int    dots   = 0;
+	bool   hasF   = false;
+	size_t start  = (s[0] == '-' || s[0] == '+') ? 1 : 0;
 
 	for (size_t i = start; i < s.length(); i++)
 	{
-		if (s[i] == '.')      { hasDot = true; continue; }
-		if (s[i] == 'f' && i == s.length() - 1) { hasF = true; continue; }
-		if (!std::isdigit(s[i])) return CHAR;
+		if (std::isdigit(s[i]))                        digits++;
+		else if (s[i] == '.')                          dots++;
+		else if (s[i] == 'f' && i == s.length() - 1)   hasF = true;
+		else                                           return INVALID;
 	}
 
-	if (hasDot && hasF)  return FLOAT;
-	if (hasDot && !hasF) return DOUBLE;
+	if (digits == 0 || dots > 1 || (hasF && dots == 0))
+		return INVALID;
+	if (hasF)  return FLOAT;
+	if (dots)  return DOUBLE;
 	return INT;
 }
 
@@ -53,27 +63,51 @@ static void printInt(double val)
 		std::cout << "int: " << static_cast<int>(val) << std::endl;
 }
 
+static void printNumber(double n)
+{
+	if (n == std::floor(n))
+	{
+		std::cout << std::fixed << std::setprecision(1) << n;
+		std::cout.unsetf(std::ios::fixed);
+		std::cout << std::setprecision(6);
+	}
+	else
+		std::cout << n;
+}
+
 static void printFloat(double val)
 {
+	if (std::fabs(val) > FLT_MAX)
+	{
+		std::cout << "float: impossible" << std::endl;
+		return;
+	}
 	float f = static_cast<float>(val);
-	if (f == static_cast<long>(f))
-		std::cout << "float: " << f << ".0f" << std::endl;
-	else
-		std::cout << "float: " << f << "f" << std::endl;
+	std::cout << "float: ";
+	printNumber(f);
+	std::cout << "f" << std::endl;
 }
 
 static void printDouble(double val)
 {
-	if (val == static_cast<long>(val) && !std::isinf(val))
-		std::cout << "double: " << val << ".0" << std::endl;
-	else
-		std::cout << "double: " << val << std::endl;
+	std::cout << "double: ";
+	printNumber(val);
+	std::cout << std::endl;
 }
 
 void ScalarConverter::convert(std::string const& literal)
 {
 	LiteralType type = detectType(literal);
 	double val = 0.0;
+
+	if (type == INVALID)
+	{
+		std::cout << "char: impossible" << std::endl;
+		std::cout << "int: impossible" << std::endl;
+		std::cout << "float: impossible" << std::endl;
+		std::cout << "double: impossible" << std::endl;
+		return;
+	}
 
 	if (type == SPECIAL)
 	{
@@ -97,13 +131,22 @@ void ScalarConverter::convert(std::string const& literal)
 
 	if (type == CHAR)
 	{
-		val = static_cast<double>(literal[0]);
+		char c = (literal.length() == 3) ? literal[1] : literal[0];
+		val = static_cast<double>(c);
 	}
 	else
 	{
 		char* end;
 		errno = 0;
 		val = std::strtod(literal.c_str(), &end);
+		if (errno == ERANGE && std::isinf(val))
+		{
+			std::cout << "char: impossible" << std::endl;
+			std::cout << "int: impossible" << std::endl;
+			std::cout << "float: impossible" << std::endl;
+			std::cout << "double: impossible" << std::endl;
+			return;
+		}
 	}
 
 	printChar(val);
