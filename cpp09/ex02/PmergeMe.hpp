@@ -20,12 +20,14 @@ private:
 	std::vector<int>	_vec;
 	std::deque<int>		_deq;
 
-	void	parseArgs(int argc, char** argv);
-	void	sortVector();
-	void	sortDeque();
+	static int	parseNumber(std::string const& s);
+	static void	validateArgs(int argc, char** argv);
 
-	static void fjVec(std::vector<int>& v);
-	static void fjDeq(std::deque<int>& d);
+	void	sortVector(int argc, char** argv);
+	void	sortDeque(int argc, char** argv);
+
+	static std::vector<size_t>	fjVec(std::vector<int> const& keys);
+	static std::deque<size_t>	fjDeq(std::deque<int> const& keys);
 
 	template <typename C>
 	static void printContainer(std::string const& label, C const& c)

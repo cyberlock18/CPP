@@ -12,6 +12,9 @@ public:
 	~RPN();
 
 	int evaluate(std::string const& expression) const;
+
+private:
+	static int apply(int a, int b, char op);
 };
 
 #endif

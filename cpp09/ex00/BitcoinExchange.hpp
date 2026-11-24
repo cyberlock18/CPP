@@ -19,9 +19,11 @@ public:
 private:
 	std::map<std::string, double> _db;
 
-	bool		isValidDate(std::string const& date) const;
-	bool		isValidValue(std::string const& val, double& out) const;
-	double		getRate(std::string const& date) const;
+	static void	stripCR(std::string& line);
+	static bool	isValidDate(std::string const& date);
+	static bool	isNumber(std::string const& val);
+	static bool	isValidValue(std::string const& val, std::string const& line, double& out);
+	bool		getRate(std::string const& date, double& rate) const;
 };
 
 #endif
